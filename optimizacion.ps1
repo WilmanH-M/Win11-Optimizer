@@ -45,10 +45,6 @@ function Optimize-Processes {
     powercfg -h off
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "ClearPageFileAtShutdown" -Value 1
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "LargeSystemCache" -Value 1
-    Set-MpPreference -DisableRealtimeMonitoring $true
-    Set-MpPreference -DisableBehaviorMonitoring $true
-    Set-MpPreference -DisableIOAVProtection $true
-    Set-MpPreference -DisablePrivacyMode $true
 }
 
 function Clean-TempFiles {
@@ -72,6 +68,23 @@ function Restore-Defaults {
     irm https://raw.githubusercontent.com/yourrepo/restore-windows/main/restore.ps1 | iex
 }
 
+function Update-System {
+    Write-Host "Actualizando el sistema y software..." -ForegroundColor Yellow
+    Install-Module PSWindowsUpdate -Force -SkipPublisherCheck
+    Import-Module PSWindowsUpdate
+    Get-WindowsUpdate -Install -AcceptAll -AutoReboot
+}
+
+function Configure-Security {
+    Write-Host "Configurando las políticas de seguridad..." -ForegroundColor Yellow
+    Set-MpPreference -DisableRealtimeMonitoring $false
+    Set-MpPreference -DisableBehaviorMonitoring $false
+    Set-MpPreference -DisableIOAVProtection $false
+    Set-MpPreference -DisablePrivacyMode $false
+    New-NetFirewallRule -DisplayName "Bloquear conexiones entrantes" -Direction Inbound -Action Block -Profile Any
+    New-NetFirewallRule -DisplayName "Bloquear conexiones salientes" -Direction Outbound -Action Block -Profile Any
+}
+
 # Menú principal
 do {
     $choice = Show-Menu
@@ -83,6 +96,8 @@ do {
         "5" { Activate-WindowsOffice }
         "6" { Show-SystemStatus }
         "7" { Restore-Defaults }
+        "8" { Update-System }
+        "9" { Configure-Security }
         "0" { exit }
         default { Write-Host "Opción no válida, intenta de nuevo." -ForegroundColor Red }
     }
