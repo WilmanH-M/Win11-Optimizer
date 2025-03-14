@@ -17,16 +17,18 @@ function Show-Menu {
     Write-Host "[5] Activar Windows y Office"
     Write-Host "[6] Mostrar Estado del Sistema"
     Write-Host "[7] Restaurar Configuración por Defecto"
+    Write-Host "[8] Actualizar Sistema"
+    Write-Host "[9] Configurar Seguridad"
     Write-Host "[0] Salir"
     Write-Host ""
     Write-Host "=============================================" -ForegroundColor Cyan
-    $option = Read-Host "Elige una opción [1,2,3,4,5,6,7,0]"
+    $option = Read-Host "Elige una opción [1,2,3,4,5,6,7,8,9,0]"
     return $option
 }
 
 function Remove-Bloatware {
     Write-Host "Eliminando Bloatware..." -ForegroundColor Yellow
-    irm https://git.io/debloat | iex
+    .\debloat.ps1
 }
 
 function Disable-Services {
@@ -62,7 +64,7 @@ function Clean-TempFiles {
 
 function Activate-WindowsOffice {
     Write-Host "Activando Windows y Office..." -ForegroundColor Yellow
-    irm https://get.activated.win | iex
+    .\activate.ps1
 }
 
 function Show-SystemStatus {
@@ -72,7 +74,7 @@ function Show-SystemStatus {
 
 function Restore-Defaults {
     Write-Host "Restaurando configuración original..." -ForegroundColor Yellow
-    irm https://raw.githubusercontent.com/yourrepo/restore-windows/main/restore.ps1 | iex
+    .\restore.ps1
 }
 
 function Update-System {
