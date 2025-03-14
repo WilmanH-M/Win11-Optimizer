@@ -41,11 +41,16 @@ function Optimize-Processes {
     Write-Host "Optimizando Procesos y Subprocesos..." -ForegroundColor Yellow
     bcdedit /set useplatformtick yes
     bcdedit /set disabledynamictick yes
+    bcdedit /set tscsyncpolicy Enhanced
+    powercfg -h off
+    Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "ClearPageFileAtShutdown" -Value 1
+    Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "LargeSystemCache" -Value 1
 }
 
 function Clean-TempFiles {
     Write-Host "Limpiando Archivos Temporales..." -ForegroundColor Yellow
     Get-ChildItem -Path "C:\Windows\Temp","C:\Users\$env:UserName\AppData\Local\Temp" -Recurse -Force | Remove-Item -Force -Recurse
+    Write-Host "Archivos temporales limpiados." -ForegroundColor Green
 }
 
 function Activate-WindowsOffice {
