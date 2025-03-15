@@ -4,35 +4,45 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit
 }
 
+function CenterText {
+    param (
+        [string]$text
+    )
+    $width = [System.Console]::WindowWidth
+    $padLeft = ($width - $text.Length) / 2
+    return $text.PadLeft($padLeft + $text.Length)
+}
+
 function Show-Menu {
     Clear-Host
-    Write-Host "=============================================" -ForegroundColor Cyan
-    Write-Host " Windows 11 Optimization Tool " -ForegroundColor Green
-    Write-Host "=============================================" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "[1] Eliminar Bloatware"
-    Write-Host "[2] Desactivar Servicios Innecesarios"
-    Write-Host "[3] Optimizar Procesos y Subprocesos"
-    Write-Host "[4] Limpiar Archivos Temporales"
-    Write-Host "[5] Activar Windows y Office"
-    Write-Host "[6] Mostrar Estado del Sistema"
-    Write-Host "[7] Restaurar Configuración por Defecto"
-    Write-Host "[8] Actualizar Sistema"
-    Write-Host "[9] Configurar Seguridad"
-    Write-Host "[0] Salir"
+    Write-Host (CenterText "=============================================") -ForegroundColor Cyan
+    Write-Host (CenterText " Windows 11 Optimization Tool ") -ForegroundColor Green
+    Write-Host (CenterText "=============================================") -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "=============================================" -ForegroundColor Cyan
-    $option = Read-Host "Elige una opción [1,2,3,4,5,6,7,8,9,0]"
+    Write-Host (CenterText "[1] Eliminar Bloatware")
+    Write-Host (CenterText "[2] Desactivar Servicios Innecesarios")
+    Write-Host (CenterText "[3] Optimizar Procesos y Subprocesos")
+    Write-Host (CenterText "[4] Limpiar Archivos Temporales")
+    Write-Host (CenterText "[5] Activar Windows y Office")
+    Write-Host (CenterText "[6] Mostrar Estado del Sistema")
+    Write-Host (CenterText "[7] Restaurar Configuración por Defecto")
+    Write-Host (CenterText "[8] Actualizar Sistema")
+    Write-Host (CenterText "[9] Configurar Seguridad")
+    Write-Host (CenterText "[0] Salir")
+    Write-Host ""
+    Write-Host (CenterText "=============================================") -ForegroundColor Cyan
+    $option = Read-Host (CenterText "Elige una opción [1,2,3,4,5,6,7,8,9,0]")
     return $option
 }
 
 function Remove-Bloatware {
-    Write-Host "Eliminando Bloatware..." -ForegroundColor Yellow
+    Write-Host (CenterText "Eliminando Bloatware...") -ForegroundColor Yellow
     .\debloat.ps1
 }
 
 function Disable-Services {
-    Write-Host "Desactivando Servicios Innecesarios..." -ForegroundColor Yellow
+    Write-Host (CenterText "Desactivando Servicios Innecesarios...") -ForegroundColor Yellow
     $services = @("DiagTrack", "dmwappushservice", "WSearch", "Fax", "XblGameSave", "XboxNetApiSvc", "RetailDemo", "MapsBroker", "WalletService")
     foreach ($service in $services) {
         Get-Service -Name $service -ErrorAction SilentlyContinue | Stop-Service -Force -PassThru | Set-Service -StartupType Disabled
@@ -40,7 +50,7 @@ function Disable-Services {
 }
 
 function Optimize-Processes {
-    Write-Host "Optimizando Procesos y Subprocesos..." -ForegroundColor Yellow
+    Write-Host (CenterText "Optimizando Procesos y Subprocesos...") -ForegroundColor Yellow
     bcdedit /set useplatformtick yes
     bcdedit /set disabledynamictick yes
     bcdedit /set tscsyncpolicy Enhanced
@@ -57,35 +67,35 @@ function Optimize-Processes {
 }
 
 function Clean-TempFiles {
-    Write-Host "Limpiando Archivos Temporales..." -ForegroundColor Yellow
+    Write-Host (CenterText "Limpiando Archivos Temporales...") -ForegroundColor Yellow
     Get-ChildItem -Path "C:\Windows\Temp","C:\Users\$env:UserName\AppData\Local\Temp" -Recurse -Force | Remove-Item -Force -Recurse
-    Write-Host "Archivos temporales limpiados." -ForegroundColor Green
+    Write-Host (CenterText "Archivos temporales limpiados.") -ForegroundColor Green
 }
 
 function Activate-WindowsOffice {
-    Write-Host "Activando Windows y Office..." -ForegroundColor Yellow
+    Write-Host (CenterText "Activando Windows y Office...") -ForegroundColor Yellow
     .\activate.ps1
 }
 
 function Show-SystemStatus {
-    Write-Host "Estado del Sistema:" -ForegroundColor Cyan
+    Write-Host (CenterText "Estado del Sistema:") -ForegroundColor Cyan
     Get-ComputerInfo | Select-Object CsName, OsName, WindowsVersion, OsArchitecture, CsTotalPhysicalMemory
 }
 
 function Restore-Defaults {
-    Write-Host "Restaurando configuración original..." -ForegroundColor Yellow
+    Write-Host (CenterText "Restaurando configuración original...") -ForegroundColor Yellow
     .\restore.ps1
 }
 
 function Update-System {
-    Write-Host "Actualizando el sistema y software..." -ForegroundColor Yellow
+    Write-Host (CenterText "Actualizando el sistema y software...") -ForegroundColor Yellow
     Install-Module PSWindowsUpdate -Force -SkipPublisherCheck
     Import-Module PSWindowsUpdate
     Get-WindowsUpdate -Install -AcceptAll -AutoReboot
 }
 
 function Configure-Security {
-    Write-Host "Configurando las políticas de seguridad..." -ForegroundColor Yellow
+    Write-Host (CenterText "Configurando las políticas de seguridad...") -ForegroundColor Yellow
     Set-MpPreference -DisableRealtimeMonitoring $false
     Set-MpPreference -DisableBehaviorMonitoring $false
     Set-MpPreference -DisableIOAVProtection $false
@@ -108,7 +118,7 @@ do {
         "8" { Update-System }
         "9" { Configure-Security }
         "0" { exit }
-        default { Write-Host "Opción no válida, intenta de nuevo." -ForegroundColor Red }
+        default { Write-Host (CenterText "Opción no válida, intenta de nuevo.") -ForegroundColor Red }
     }
     Pause
 } while ($choice -ne "0")
